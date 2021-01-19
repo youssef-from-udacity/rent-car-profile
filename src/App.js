@@ -1,25 +1,53 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react';
+import Card from './containers/Card/Card';
+import Layout from './hoc/Layout/Layout';
+import { unstable_createMuiStrictModeTheme as createMuiTheme } from '@material-ui/core';
+import { ThemeProvider } from '@material-ui/styles';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      light: '#b085f5',
+      main: '#7e57c2',
+      dark: '#4d2c91',
+      contrastText: '#fff',
+    },
+    secondary: {
+      main: '#f73378',
+      contrastText: '#fff',
+    },
+  },
+});
+
+
+
+const primaryDark = theme.palette.primary.dark;
+const primaryMain = theme.palette.primary.main;
+const primaryContrastText = theme.palette.primary.contrastText;
+const primaryLight = theme.palette.primary.light;
+
+document.body.style.setProperty("--primaryDark", primaryDark)
+document.body.style.setProperty("--primaryMain", primaryMain)
+document.body.style.setProperty("--primaryContrastText", primaryContrastText)
+document.body.style.setProperty("--primaryLight", primaryLight)
+
+
+class App extends Component {
+  
+  
+  render() {
+    
+    const { forwardedRef, ...props } = this.props;
+
+    return (
+        <ThemeProvider theme={theme} {...props} ref={forwardedRef} >
+          <Layout>
+            <Card />
+          </Layout>
+        </ThemeProvider>
+    );
+  }
 }
 
 export default App;
