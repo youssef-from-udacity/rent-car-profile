@@ -4,10 +4,10 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import ButtonBase from '@material-ui/core/ButtonBase';
-import DatePickerRange from '../DatePicker/DatePicker';
-import bmw from '../../assets/images/bmw.jpg';
-import mercedes from '../../assets/images/mercedes.jpg';
-import toyota4x4 from '../../assets/images/toyota-4x4.jpg';
+import DatePickerRange from '../../containers/DatePicker/DatePicker';
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
+import BuildIcon from '@material-ui/icons/Build';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -22,7 +22,8 @@ const useStyles = makeStyles((theme) => ({
   },
   image: {
     width: "100%",
-    height: 128,
+    maxHeight: 300,
+    overflow: "hidden",
   },
   img: {
     margin: 'auto',
@@ -32,30 +33,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const defaultData = {
-  contacts: [
-    {
-      id: 'ryan',
-      name: 'Ryan Florence',
-      email: 'ryan@reacttraining.com',
-      avatarURL: bmw
-    },
-    {
-      id: 'michael',
-      name: 'Michael Jackson',
-      email: 'michael@reacttraining.com',
-      avatarURL: mercedes
-    },
-    {
-      id: 'tyler',
-      name: 'Tyler McGinnis',
-      email: 'tyler@reacttraining.com',
-      avatarURL: toyota4x4
-    }
-  ]
-}
-
-function ComplexGrid(props) {
+export default function Card(props) {
   const classes = useStyles();
 
   return (
@@ -64,7 +42,7 @@ function ComplexGrid(props) {
         <Grid container spacing={2}>
           <Grid xs={12} sm={4} item>
             <ButtonBase className={classes.image}>
-              <img className={classes.img} alt="complex" src={props.avatarURL} />
+              <img className={classes.img} alt="complex" src={props.item.avatarURL} />
             </ButtonBase>
           </Grid>
           <Grid item xs={12} sm={8} container>
@@ -82,9 +60,12 @@ function ComplexGrid(props) {
                 </Typography>
               </Grid>
               <Grid item>
-                <Typography variant="body2" style={{ cursor: 'pointer' }}>
-                  Remove
-                </Typography>
+                <IconButton aria-label="edit config" onClick={() => props.open(props.item)}>
+                  <BuildIcon />
+                </IconButton>
+                <IconButton aria-label="delete">
+                  <DeleteIcon />
+                </IconButton>
               </Grid>
             </Grid>
             <Grid item>
@@ -95,12 +76,4 @@ function ComplexGrid(props) {
       </Paper>
     </div>
   );
-}
-
-
-export default function Card() {
-  return (
-    defaultData.contacts.map(item => <ComplexGrid key={item.id} avatarURL={item.avatarURL} />)
-  );
-  
 }

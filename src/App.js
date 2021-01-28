@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Card from './containers/Card/Card';
+import Cards from './containers/Cards/Cards';
 import Layout from './hoc/Layout/Layout';
 import { unstable_createMuiStrictModeTheme as createMuiTheme } from '@material-ui/core';
 import { ThemeProvider } from '@material-ui/styles';
@@ -43,7 +43,7 @@ class App extends Component {
     return (
         <ThemeProvider theme={theme} {...props} ref={forwardedRef} >
           <Layout>
-            <Card />
+            <Cards />
           </Layout>
         </ThemeProvider>
     );
