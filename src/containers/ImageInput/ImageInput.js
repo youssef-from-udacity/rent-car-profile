@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { CarAvatar } from '../Tabs/CustomIcons';
+import { CarAvatar } from '../../components/UI/CustomIcons/CustomIcons';
 import Fab from '@material-ui/core/Fab';
 import TextField from '@material-ui/core/TextField';
 import PublishIcon from '@material-ui/icons/Publish';
 import { makeStyles } from '@material-ui/core/styles';
+
+import {useCardContext} from '../Cards/Cards';
 
 
 
@@ -49,8 +51,9 @@ const resizeImage = (imageURL, canvas, maxHeight) =>
  * submitting them to the server as data URLs. Also, shows a preview of the image.
  */
 const ImageInput = React.forwardRef(function ImageInput(props, ref) {
+  const {item} = useCardContext()
   const [state, setState] = useState({
-    value: ""
+    value: item.avatarURL
   })
   const [canvas, SetCanvas] = useState(null)
   const { name } = props

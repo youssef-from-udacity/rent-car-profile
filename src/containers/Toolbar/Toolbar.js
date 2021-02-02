@@ -1,21 +1,24 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import InputBase from '@material-ui/core/InputBase';
 import Badge from '@material-ui/core/Badge';
 import Box from '@material-ui/core/Box';
 import Hidden from '@material-ui/core/Hidden';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import SearchIcon from '@material-ui/icons/Search';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import SwipeableTemporaryDrawer from '../SideDrawer/SideDrawer';
+import * as actions from "../../store/actions/index.js";
+import { Link as RouterLink } from 'react-router-dom';
+
 
 const useStyles = makeStyles((theme) => ({
     grow: {
@@ -25,10 +28,8 @@ const useStyles = makeStyles((theme) => ({
         marginRight: theme.spacing(2),
     },
     title: {
-        display: 'none',
-        [theme.breakpoints.up('sm')]: {
-            display: 'block',
-        },
+        display: 'block',
+        fontWeight: 900,
     },
     search: {
         position: 'relative',
@@ -81,7 +82,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function PrimarySearchAppBary() {
+const PrimaryAppBar = (props) => {
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
@@ -113,12 +114,13 @@ export default function PrimarySearchAppBary() {
             anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
             id={menuId}
             keepMounted
-            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+            transformOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
             <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
             <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+            <MenuItem onClick={handleMenuClose} component={RouterLink} to="/logout">Se déconnecter</MenuItem>
         </Menu>
     );
 
@@ -176,42 +178,47 @@ export default function PrimarySearchAppBary() {
                             <SwipeableTemporaryDrawer />
                         </Box>
                     </Hidden>
-                    <Typography className={classes.title} variant="h6" noWrap>Material-UI</Typography>
-                    <Box component="div" className={classes.search}>
-                        <Box component="div" className={classes.searchIcon}>
-                            <SearchIcon />
-                        </Box>
-                        <InputBase
-                            placeholder="Search…"
-                            classes={{
-                                root: classes.inputRoot,
-                                input: classes.inputInput,
-                            }}
-                            inputProps={{ 'aria-label': 'search' }}
-                        />
-                    </Box>
+                    <Typography className={classes.title} variant="h6" noWrap>Car Management</Typography>
                     <Box component="div" className={classes.grow} />
                     <Box component="div" className={classes.sectionDesktop}>
-                        <IconButton aria-label="show 4 new mails" color="inherit">
-                            <Badge badgeContent={4} color="secondary">
-                                <MailIcon />
-                            </Badge>
-                        </IconButton>
-                        <IconButton aria-label="show 17 new notifications" color="inherit">
-                            <Badge badgeContent={17} color="secondary">
-                                <NotificationsIcon />
-                            </Badge>
-                        </IconButton>
-                        <IconButton
-                            edge="end"
-                            aria-label="account of current user"
-                            aria-controls={menuId}
-                            aria-haspopup="true"
-                            onClick={handleProfileMenuOpen}
-                            color="inherit"
-                        >
-                            <AccountCircle />
-                        </IconButton>
+                        {
+                            props.isAuthenticated ? (
+                                <>
+                                    <IconButton aria-label="show 4 new mails" color="inherit">
+                                        <Badge badgeContent={4} color="secondary">
+                                            <MailIcon />
+                                        </Badge>
+                                    </IconButton>
+                                    <IconButton aria-label="show 17 new notifications" color="inherit">
+                                        <Badge badgeContent={17} color="secondary">
+                                            <NotificationsIcon />
+                                        </Badge>
+                                    </IconButton>
+                                    <IconButton
+                                        edge="end"
+                                        aria-label="account of current user"
+                                        aria-controls={menuId}
+                                        aria-haspopup="true"
+                                        onClick={handleProfileMenuOpen}
+                                        color="inherit"
+                                    >
+                                        <AccountCircle />
+                                    </IconButton></>
+                            ) : (
+
+                                        <Button
+                                            startIcon={<AccountCircle />}
+                                            edge="end"
+                                            aria-label="account of current user"
+                                            aria-controls={menuId}
+                                            aria-haspopup="true"
+                                            color="inherit"
+                                            component={RouterLink} to="/sign-in"
+                                        >Se connecter</Button>
+                                    )
+                        }
+
+
                     </Box>
                     <Box component="div" className={classes.sectionMobile}>
                         <IconButton
@@ -226,11 +233,29 @@ export default function PrimarySearchAppBary() {
                     </Box>
                 </Toolbar>
             </AppBar>
-            {renderMobileMenu}
-            {renderMenu}
+            {
+                renderMobileMenu
+            }
+            {
+                renderMenu
+            }
         </Box>
     );
 }
+
+const mapStateToProps = state => {
+    return {
+        isAuthenticated: state.auth.token !== null,
+    };
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        onInitDefaultData: () => dispatch(actions.initDefaultData()),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(PrimaryAppBar);
 
 
 

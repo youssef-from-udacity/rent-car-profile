@@ -6,7 +6,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import DriveEtaIcon from '@material-ui/icons/DriveEta';
-import {CarRepairIcon} from './CustomIcons';
+import {CarRepairIcon} from '../../components/UI/CustomIcons/CustomIcons';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import FirstTab from '../../components/Accordion/Accordion';
 

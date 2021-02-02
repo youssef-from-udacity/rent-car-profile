@@ -2,20 +2,16 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import { CarIcon, CarLicensePlate, OdoMeter, HorsePower, CarAvatar } from './CustomIcons';
+import { CarIcon, CarLicensePlate, OdoMeter, HorsePower } from '../../../components/UI/CustomIcons/CustomIcons';
 import LocalGasStationIcon from '@material-ui/icons/LocalGasStation';
 import MenuItem from '@material-ui/core/MenuItem';
 import Paper from '@material-ui/core/Paper';
-import Button from '@material-ui/core/Button';
 import ButtonBase from '@material-ui/core/ButtonBase';
-import Fab from '@material-ui/core/Fab';
-import PublishIcon from '@material-ui/icons/Publish';
 import { NoSsr } from '@material-ui/core';
-import { updateObject } from '../../shared/utility';
+import { updateObject } from '../../../shared/utility';
 import clsx from 'clsx';
-import { itemContext } from '../Cards/Cards';
-import ImageInput from '../ImageInput/ImageInput.js';
-
+import { itemContext } from '../../Cards/Cards';
+import ImageInput from '../../ImageInput/ImageInput';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -140,12 +136,6 @@ export default function InputWithIcon() {
             <div className={clsx('clearfix', classes.root)}>
                     <Paper className={classes.imageContainer} elevation={3}>
                         <ButtonBase style={{ position: 'static',width: '100%',height: '100%' }}>
-                            {/* {context.item.avatarURL ? (<img className={classes.img} alt="complex" src={context.item.avatarURL} />) :
-                                (<CarAvatar />)}
-
-                            <Fab className={classes.fab} component="div" color="default" aria-label="add">
-                                <PublishIcon />
-                            </Fab> */}
                         <ImageInput
                             name='avatarURL'
                             maxHeight={330}

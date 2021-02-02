@@ -43,12 +43,13 @@ export const checkAuthTimeout = expirationTime => {
   };
 };
 
-export const auth = (email, password, isSignup) => {
+export const auth = (email, password, isSignup, defaultData = null) => {
   return {
     type: actionTypes.AUTH_USER,
     email: email,
     password: password,
-    isSignup: isSignup
+    isSignup: isSignup,
+    defaultData: defaultData,
   };
 };
 

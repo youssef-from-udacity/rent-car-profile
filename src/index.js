@@ -6,12 +6,12 @@ import * as serviceWorker from './serviceWorker';
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { createStore, applyMiddleware, compose, combineReducers } from "redux";
-import burgerBuilderReducer from "./store/reducers/burgerBuilder";
-import orderReducer from "./store/reducers/order";
+import defaultDataReducer from "./store/reducers/defaultData";
 import authReducer from "./store/reducers/auth";
+import privateDataReducer from "./store/reducers/privateData";
 import thunk from "redux-thunk";
 import createSagaMiddleware from "redux-saga";
-import { watchAuth, watchBurgerBuilder, watchOrder } from "./store/sagas";
+import { watchDefaultData, watchAuth, watchPrivateData } from "./store/sagas";
 
 
 const composeEnhancers =
@@ -20,9 +20,10 @@ const composeEnhancers =
     : null) || compose;
 
 const rootReducer = combineReducers({
-  burgerBuilder: burgerBuilderReducer,
-  order: orderReducer,
-  auth: authReducer
+  defaultData: defaultDataReducer,
+  auth: authReducer,
+  privateData: privateDataReducer,
+
 });
 
 const sagaMiddleware = createSagaMiddleware();
@@ -32,16 +33,16 @@ const store = createStore(
   composeEnhancers(applyMiddleware(thunk, sagaMiddleware))
 );
 
+sagaMiddleware.run(watchDefaultData);
 sagaMiddleware.run(watchAuth);
-sagaMiddleware.run(watchBurgerBuilder);
-sagaMiddleware.run(watchOrder);
+sagaMiddleware.run(watchPrivateData);
 
 ReactDOM.render(
   <React.StrictMode>
-  <Provider store={store}>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <Provider store={store}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')

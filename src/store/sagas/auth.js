@@ -3,6 +3,7 @@ import { put, call } from "redux-saga/effects";
 import axios from "axios";
 
 import * as actions from "../actions/index";
+import { updateObject } from "../../shared/utility";
 
 export function* logoutSaga(action) {
   yield call([localStorage, "removeItem"], "token");
@@ -24,23 +25,35 @@ export function* authUserSaga(action) {
     returnSecureToken: true
   };
   let url =
-  'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCZ8uHRPRkBaLv_BPYU8bM6e2Mv_LDdG30';
+    'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDrfLrtiaaBbeoYf4qM8LheYrU28msr09A';
   if (!action.isSignup) {
     url =
-    'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCZ8uHRPRkBaLv_BPYU8bM6e2Mv_LDdG30';
+      'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDrfLrtiaaBbeoYf4qM8LheYrU28msr09A';
   }
   try {
     const response = yield axios.post(url, authData);
-      const expirationDate = yield new Date(
-        new Date().getTime() + response.data.expiresIn * 1000
-      );
-      yield localStorage.setItem("token", response.data.idToken);
-      yield localStorage.setItem("expirationDate", expirationDate);
-      yield localStorage.setItem("userId", response.data.localId);
-      yield put(
-        actions.authSuccess(response.data.idToken, response.data.localId)
-      );
-      yield put(actions.checkAuthTimeout(response.data.expiresIn));
+    const expirationDate = yield new Date(
+      new Date().getTime() + response.data.expiresIn * 1000
+    );
+    yield localStorage.setItem("token", response.data.idToken);
+    yield localStorage.setItem("expirationDate", expirationDate);
+    yield localStorage.setItem("userId", response.data.localId);
+
+    if (action.isSignup) {
+      const dataToPost = action.defaultData.map((obj) => updateObject({ userId: response.data.localId }, obj));
+
+        for (var item of dataToPost) {
+          yield put(actions.postDefaultData(item, response.data.idToken, response.data.localId));
+        }
+    } else {
+      yield put(actions.fetchPrivateData(response.data.idToken, response.data.localId))
+    }
+    yield put(
+      actions.authSuccess(response.data.idToken, response.data.localId)
+    );
+    
+    yield put(actions.checkAuthTimeout(response.data.expiresIn));
+
 
   } catch (error) {
     yield put(actions.authFail(error.message));
@@ -60,6 +73,8 @@ export function* authCheckStateSaga(action) {
     } else {
       const userId = yield localStorage.getItem("userId");
       yield put(actions.authSuccess(token, userId));
+      yield put(actions.fetchPrivateData(token, userId))
+
       yield put(
         actions.checkAuthTimeout(
           (expirationDate.getTime() - new Date().getTime()) / 1000
