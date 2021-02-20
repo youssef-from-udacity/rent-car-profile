@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import fr from "date-fns/locale/fr";
@@ -6,17 +6,16 @@ import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 import getMonth from "date-fns/getMonth";
-import CustomInput from '../../components/CustomDatePickerInput/CustomDatePickerInput';
+import CustomInput from './CustomDatePickerInput/CustomDatePickerInput';
 import Box from '@material-ui/core/Box';
-import TimeElapsed from '../../components/ElapsedTime/ElapsedTime';
-
+import TimeElapsed from './ElapsedTime/ElapsedTime';
 
 
 registerLocale("fr", fr);
 
 const CustomDatePickerHeader = (props) => {
   const [startDate, setStartDate] = useState(new Date());
-  const months = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+  const months = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
   return (
 
     <DatePicker
@@ -69,40 +68,58 @@ const CustomDatePickerHeader = (props) => {
     />
   );
 };
-
-
-export default function DatePickerRange() {
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(0);
-  const endDateRef = useRef('')
-
-  const onChange = dates => {
-    const [start, end] = dates;
-    setStartDate(start);
-    setEndDate(end);
-    endDateRef.current = end ? 'end': '';
-    window.youssef = endDateRef;
-    
-  };
+const SelectTime = (props) => {
+  //const [startDate, setStartDate] = useState(new Date());
+  const { startDate, onChange } = props
 
   return (
-    <>
-    <Box my={1}>
-      <CustomDatePickerHeader
-        selected={startDate}
-        onChange={onChange}
-        startDate={startDate}
-        endDate={endDate}
-        selectsRange
-        shouldCloseOnSelect={false}
-        withPortal
-        dateFormat="MM/dd/yyyy"
-        locale='fr'
-        customInput={<CustomInput />}
-      />
-      </Box>
-      
-      <TimeElapsed startDate={startDate} endDate={endDate} />
-      </>
+    <DatePicker
+      selected={startDate}
+      onChange={date => onChange(date)}
+      showTimeSelect
+      showTimeSelectOnly
+      withPortal
+      onCalendarOpen={() => document.body.style.setProperty("overflow", 'hidden')}
+      onCalendarClose={() => document.body.style.setProperty("overflow", 'auto')}
+      timeIntervals={15}
+      timeCaption="Time"
+      dateFormat="h:mm aa"
+      customInput={<CustomInput style={{ marginLeft: 8, }} />}
+    />
   );
 };
+
+export default function DatePickerRange(props) {
+  const { startDate, endDate, handleChange } = props
+
+  const onChange = (date) => {
+    const dates = Array.isArray(date) ? date : [date, endDate]
+    handleChange(dates)
+  }
+  return (
+    <>
+      <Box my={1} style={{ display: "flex", }}>
+        <CustomDatePickerHeader
+          selected={startDate}
+          onChange={onChange}
+          startDate={startDate}
+          endDate={endDate}
+          withPortal
+          selectsRange
+          onCalendarOpen={() => document.body.style.setProperty("overflow", 'hidden')}
+          onCalendarClose={() => document.body.style.setProperty("overflow", 'auto')}
+          minDate={new Date()}
+          showDisabledMonthNavigation
+          shouldCloseOnSelect={false}
+          dateFormat="MM/dd/yyyy"
+          locale='fr'
+          customInput={<CustomInput startIcon={true} />}
+        />
+        <SelectTime startDate={startDate} onChange={onChange} />
+      </Box>
+
+      <TimeElapsed endDate={endDate} />
+    </>
+  );
+};
+

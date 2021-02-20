@@ -40,13 +40,14 @@ export function* authUserSaga(action) {
     yield localStorage.setItem("userId", response.data.localId);
 
     if (action.isSignup) {
+      //yield put(actions.fetchDefaultData());
       const dataToPost = action.defaultData.map((obj) => updateObject({ userId: response.data.localId }, obj));
 
         for (var item of dataToPost) {
-          yield put(actions.postDefaultData(item, response.data.idToken, response.data.localId));
+          yield put(actions.postUserData(item, response.data.idToken, response.data.localId));
         }
     } else {
-      yield put(actions.fetchPrivateData(response.data.idToken, response.data.localId))
+      yield put(actions.fetchUserData(response.data.idToken, response.data.localId))
     }
     yield put(
       actions.authSuccess(response.data.idToken, response.data.localId)
@@ -73,7 +74,7 @@ export function* authCheckStateSaga(action) {
     } else {
       const userId = yield localStorage.getItem("userId");
       yield put(actions.authSuccess(token, userId));
-      yield put(actions.fetchPrivateData(token, userId))
+      yield put(actions.fetchUserData(token, userId))
 
       yield put(
         actions.checkAuthTimeout(

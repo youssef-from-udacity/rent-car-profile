@@ -8,10 +8,10 @@ import { Provider } from "react-redux";
 import { createStore, applyMiddleware, compose, combineReducers } from "redux";
 import defaultDataReducer from "./store/reducers/defaultData";
 import authReducer from "./store/reducers/auth";
-import privateDataReducer from "./store/reducers/privateData";
+import userReducer from "./store/reducers/user";
 import thunk from "redux-thunk";
 import createSagaMiddleware from "redux-saga";
-import { watchDefaultData, watchAuth, watchPrivateData } from "./store/sagas";
+import { watchDefaultData, watchAuth, watchUser } from "./store/sagas";
 
 
 const composeEnhancers =
@@ -22,7 +22,7 @@ const composeEnhancers =
 const rootReducer = combineReducers({
   defaultData: defaultDataReducer,
   auth: authReducer,
-  privateData: privateDataReducer,
+  user: userReducer,
 
 });
 
@@ -35,7 +35,7 @@ const store = createStore(
 
 sagaMiddleware.run(watchDefaultData);
 sagaMiddleware.run(watchAuth);
-sagaMiddleware.run(watchPrivateData);
+sagaMiddleware.run(watchUser);
 
 ReactDOM.render(
   <React.StrictMode>

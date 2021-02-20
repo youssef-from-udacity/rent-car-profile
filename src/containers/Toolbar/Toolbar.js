@@ -5,7 +5,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
+import ButtonBase from '@material-ui/core/ButtonBase';
 import Badge from '@material-ui/core/Badge';
 import Box from '@material-ui/core/Box';
 import Hidden from '@material-ui/core/Hidden';
@@ -18,6 +18,9 @@ import MoreIcon from '@material-ui/icons/MoreVert';
 import SwipeableTemporaryDrawer from '../SideDrawer/SideDrawer';
 import * as actions from "../../store/actions/index.js";
 import { Link as RouterLink } from 'react-router-dom';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import { CarLogo } from '../../components/UI/CustomIcons/CustomIcons';
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -28,8 +31,47 @@ const useStyles = makeStyles((theme) => ({
         marginRight: theme.spacing(2),
     },
     title: {
-        display: 'block',
-        fontWeight: 900,
+        width: "100%",
+        position: "relative",
+        [theme.breakpoints.up('sm')]: {
+            width: "auto",
+        },
+        '& button': {
+            margin: "auto",
+            display: 'block',
+            fontWeight: 900,
+            height: "60px",
+            padding: "10px 20px",
+            position: "relative",
+            width: "125px",
+            '& svg': {
+                fontSize: "5rem",
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%,-50%)",
+                width: "150px",
+            },
+            [theme.breakpoints.up('sm')]: {
+                margin: 0,
+                height: "70px",
+                '& svg': {
+                    fontSize: "6rem",
+                }
+            },
+        },
+        
+    },
+    logoTitle:{
+        position: 'absolute',
+        bottom: 3,
+        left: "50%",
+        transform: "translateX(-50%)",
+        whiteSpace: "nowrap",
+        fontSize: "13px",
+        [theme.breakpoints.up('sm')]: {
+            fontSize: "16px",
+        },
     },
     search: {
         position: 'relative',
@@ -76,6 +118,7 @@ const useStyles = makeStyles((theme) => ({
     },
     sectionMobile: {
         display: 'flex',
+        marginLeft: "16px",
         [theme.breakpoints.up('md')]: {
             display: 'none',
         },
@@ -120,7 +163,17 @@ const PrimaryAppBar = (props) => {
         >
             <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
             <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-            <MenuItem onClick={handleMenuClose} component={RouterLink} to="/logout">Se déconnecter</MenuItem>
+            <MenuItem onClick={handleMenuClose} component={RouterLink} to="/logout">
+                <IconButton
+                    aria-label="account of current user"
+                    aria-controls="primary-search-account-menu"
+                    aria-haspopup="true"
+                    color="inherit"
+                >
+                    <ExitToAppIcon />
+                </IconButton>
+                <p>Se déconnecter</p>
+            </MenuItem>
         </Menu>
     );
 
@@ -151,7 +204,7 @@ const PrimaryAppBar = (props) => {
                 </IconButton>
                 <p>Notifications</p>
             </MenuItem>
-            <MenuItem onClick={handleProfileMenuOpen}>
+            <MenuItem onClick={handleMenuClose}>
                 <IconButton
                     aria-label="account of current user"
                     aria-controls="primary-search-account-menu"
@@ -162,6 +215,18 @@ const PrimaryAppBar = (props) => {
                 </IconButton>
                 <p>Profile</p>
             </MenuItem>
+            <MenuItem onClick={handleMenuClose} component={RouterLink} to="/logout">
+                <IconButton
+                    aria-label="account of current user"
+                    aria-controls="primary-search-account-menu"
+                    aria-haspopup="true"
+                    color="inherit"
+                >
+                    <ExitToAppIcon />
+                </IconButton>
+                <p>Se déconnecter</p>
+            </MenuItem>
+
         </Menu>
     );
 
@@ -178,7 +243,12 @@ const PrimaryAppBar = (props) => {
                             <SwipeableTemporaryDrawer />
                         </Box>
                     </Hidden>
-                    <Typography className={classes.title} variant="h6" noWrap>Car Management</Typography>
+                    <Box className={classes.title}>
+                        <ButtonBase aria-label="logo" color="inherit">
+                            <CarLogo />
+                        <span className={classes.logoTitle}>Rent Manager</span>
+                        </ButtonBase>
+                    </Box>
                     <Box component="div" className={classes.grow} />
                     <Box component="div" className={classes.sectionDesktop}>
                         {
@@ -206,30 +276,42 @@ const PrimaryAppBar = (props) => {
                                     </IconButton></>
                             ) : (
 
-                                        <Button
-                                            startIcon={<AccountCircle />}
-                                            edge="end"
-                                            aria-label="account of current user"
-                                            aria-controls={menuId}
-                                            aria-haspopup="true"
-                                            color="inherit"
-                                            component={RouterLink} to="/sign-in"
-                                        >Se connecter</Button>
-                                    )
+                                    <Button
+                                        startIcon={<AccountCircle />}
+                                        size="large"
+                                        edge="end"
+                                        aria-label="account of current user"
+                                        aria-controls={menuId}
+                                        aria-haspopup="true"
+                                        color="inherit"
+                                        component={RouterLink} to="/sign-in"
+                                    >Se connecter</Button>
+                                )
                         }
 
 
                     </Box>
                     <Box component="div" className={classes.sectionMobile}>
-                        <IconButton
-                            aria-label="show more"
-                            aria-controls={mobileMenuId}
-                            aria-haspopup="true"
-                            onClick={handleMobileMenuOpen}
-                            color="inherit"
-                        >
-                            <MoreIcon />
-                        </IconButton>
+                        {
+                            !props.isAuthenticated ? (<IconButton
+                                aria-label="account of current user"
+                                aria-controls={menuId}
+                                aria-haspopup="true"
+                                color="inherit"
+                                component={RouterLink} to="/sign-in"
+                            ><AccountCircle /></IconButton>) : (
+                                    <IconButton
+                                        aria-label="show more"
+                                        aria-controls={mobileMenuId}
+                                        aria-haspopup="true"
+                                        onClick={handleMobileMenuOpen}
+                                        color="inherit"
+                                    >
+                                        <MoreIcon />
+                                    </IconButton>
+                                )
+                        }
+
                     </Box>
                 </Toolbar>
             </AppBar>
@@ -251,7 +333,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onInitDefaultData: () => dispatch(actions.initDefaultData()),
+        onInitDefaultData: () => dispatch(actions.fetchDefaultData()),
     }
 }
 

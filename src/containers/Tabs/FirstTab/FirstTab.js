@@ -1,248 +1,116 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import { CarIcon, CarLicensePlate, OdoMeter, HorsePower } from '../../../components/UI/CustomIcons/CustomIcons';
-import LocalGasStationIcon from '@material-ui/icons/LocalGasStation';
-import MenuItem from '@material-ui/core/MenuItem';
-import Paper from '@material-ui/core/Paper';
-import ButtonBase from '@material-ui/core/ButtonBase';
-import { NoSsr } from '@material-ui/core';
-import { updateObject } from '../../../shared/utility';
-import clsx from 'clsx';
-import { itemContext } from '../../Cards/Cards';
-import ImageInput from '../../ImageInput/ImageInput';
+import React, { lazy, Suspense, useEffect } from 'react';
+import { withStyles, makeStyles } from '@material-ui/core/styles';
+import MuiAccordion from '@material-ui/core/Accordion';
+import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
+import MuiAccordionDetails from '@material-ui/core/AccordionDetails';
+import Typography from '@material-ui/core/Typography';
+import { CarInformation, CarInsurance } from '../../../components/UI/CustomIcons/CustomIcons';
 
+const AsyncFirstAccordionSection = lazy(() => {
+  return import('./FirstAccordionSection/FirstAccordionSection');
+});
+const AsyncSecondAccordionSection = lazy(() => {
+  return import('./SecondAccordionSection/SecondAccordionSection');
+}); 
+const Accordion = withStyles({
+  root: {
+    border: '1px solid rgba(0, 0, 0, .125)',
+    boxShadow: 'none',
+    '&:not(:last-child)': {
+      borderBottom: 0,
+    },
+    '&:before': {
+      display: 'none',
+    },
+    '&$expanded': {
+      margin: 'auto',
+    },
+  },
+  expanded: {},
+})(MuiAccordion);
+
+const AccordionSummary = withStyles({
+  root: {
+    backgroundColor: 'rgba(0, 0, 0, .03)',
+    borderBottom: '1px solid rgba(0, 0, 0, .125)',
+    marginBottom: -1,
+    minHeight: 56,
+    '&$expanded': {
+      minHeight: 56,
+    },
+  },
+  content: {
+    '&$expanded': {
+      margin: '12px 0',
+    },
+  },
+  expanded: {},
+})(MuiAccordionSummary);
+
+const AccordionDetails = withStyles((theme) => ({
+  root: {
+    padding: theme.spacing(2, 0),
+    [theme.breakpoints.up(590)]: {
+      padding: theme.spacing(2),
+    },
+  },
+}))(MuiAccordionDetails);
 
 const useStyles = makeStyles((theme) => ({
-    root: {
-        position: "relative",
-        padding: theme.spacing(5, 0, 3, 0),
-        textAlign: 'center',
-        [theme.breakpoints.up('sm')]: {
-            padding: theme.spacing(5, 3, 3, 3),
-        },
-    },
-    textField: {
-        margin: theme.spacing(1),
-        marginLeft: theme.spacing(2),
-        width: '25ch',
-        '& .Mui-focused svg': {
-            color: theme.palette.primary.main,
-        },
-    },
-    disabledButton: {
-        backgroundColor: theme.palette.primary.contrastText,
-        position: "absolute",
-        top: 0,
-        transform: "translateY(-50%)",
-        [theme.breakpoints.down('sm')]: {
-            left: theme.spacing(2),
-        },
-    },
-    imageContainer: {
-        position: 'relative',
-        display: "inline-block",
-        marginLeft: "10px",
-        marginBottom: "10px",
-        width: "25ch",
-        height: 160,
-        overflow: 'hidden',
-        border: '10px solid transparent',
-        [theme.breakpoints.up(590)]: {
-            float: 'left',
-        },
-    },
-    img: {
-        width: '100%',
-        position: "absolute",
-        top: "50%",
-        transform: "translateY(-50%)",
-    },
-    fab: {
-        position: "absolute",
-        bottom: 0,
-        right: 0,
-        margin: "5px",
-    },
+  titleIcon: {
+    marginRight: 10,
+    height: 40,
+    width: 40,
+    verticalAlign: 'bottom',
+  },
+  fullBack: {
+    width: '100%',
+    minHeight: 330,
+},
 }));
 
+export default function FirstTab() {
+  const [expanded, setExpanded] = React.useState('panel1');
+  const [load, setLoad] = React.useState(false);
+  const handleChange = (panel) => (event, newExpanded) => {
+    setExpanded(newExpanded ? panel : false);
+  };
+  const classes = useStyles();
+  
+  useEffect(() => {
+    setTimeout(()=>setLoad(true),1000)
+    return () =>{
+      setLoad(false)
+    }
+  }, [])
 
-export default function InputWithIcon() {
-    const classes = useStyles();
-    const [state, setState] = React.useState({
-        name: {
-            value: '',
-        },
-        plate: {
-            value: '',
-        },
-        odometer: {
-            value: '',
-        },
-        energy: {
-            value: 'gasolin',
-            options: [
-                {
-                    value: 'deisel',
-                    label: 'Deisel',
-
-                },
-                {
-                    value: 'gasolin',
-                    label: 'Gasolin',
-                },
-                {
-                    value: 'electric',
-                    label: 'Electric',
-                }
-            ]
-        },
-        power: {
-            value: '',
-            options: [
-                {
-                    value: '5',
-                    label: '5 V',
-                },
-                {
-                    value: '6',
-                    label: '6 V',
-                },
-                {
-                    value: '7',
-                    label: '7 V',
-                },
-                {
-                    value: '8',
-                    label: '8 V',
-                },
-                {
-                    value: '9',
-                    label: '9 V',
-                },
-            ]
-        },
-
-    });
-    const handleChange = (event, name) => {
-        const updatedFormValue = updateObject(state[name], { value: event.target.value });
-        const updatedState = updateObject(state, { [name]: updatedFormValue })
-        setState(updatedState);
-    };
-
-    return (
-        <itemContext.Consumer>{context => (
-            <div className={clsx('clearfix', classes.root)}>
-                    <Paper className={classes.imageContainer} elevation={3}>
-                        <ButtonBase style={{ position: 'static',width: '100%',height: '100%' }}>
-                        <ImageInput
-                            name='avatarURL'
-                            maxHeight={330}
-                            style={{ display: 'block' }}
-                        />
-                        </ButtonBase>
-                    </Paper>
-
-                    <NoSsr>
-                        <TextField
-                            className={classes.textField}
-                            id="input-with-icon-carIcon"
-                            label="nom de la voiture"
-                            value={state.name.value}
-                            onChange={(event) => handleChange(event, 'name')}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <CarIcon />
-                                    </InputAdornment>
-                                )
-                            }}
-                        />
-                    </NoSsr>
-                    <NoSsr>
-                        <TextField
-                            className={classes.textField}
-                            id="input-with-icon-carLicensePlate"
-                            label="Plaque d'immatriculation"
-                            value={state.plate.value}
-                            onChange={(event) => handleChange(event, 'plate')}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <CarLicensePlate />
-                                    </InputAdornment>
-                                )
-                            }}
-                        />
-                    </NoSsr>
-                    <NoSsr>
-                        <TextField
-                            className={classes.textField}
-                            id="input-with-icon-odoMeter"
-                            label="odomètre actuel"
-                            value={state.odometer.value}
-                            onChange={(event) => handleChange(event, 'odometer')}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <OdoMeter />
-                                    </InputAdornment>
-                                ),
-                                endAdornment: (<InputAdornment position="end">Km</InputAdornment>)
-                            }}
-                        />
-                    </NoSsr>
-
-                    <NoSsr>
-                        <TextField
-                            className={classes.textField}
-                            id="select-Energy"
-                            label="Energy"
-                            select
-                            value={state.energy.value}
-                            onChange={(event) => handleChange(event, 'energy')}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <LocalGasStationIcon />
-                                    </InputAdornment>
-                                )
-                            }}
-                        >
-                            {state.energy.options.map((option) => (
-                                <MenuItem key={option.value} value={option.value}>
-                                    {option.label}
-                                </MenuItem>
-                            ))}
-                        </TextField>
-                    </NoSsr>
-                    <NoSsr>
-                        <TextField
-                            className={classes.textField}
-                            id="select-Puissance"
-                            label="Puissance"
-                            select
-                            value={state.power.value}
-                            onChange={(event) => handleChange(event, 'power')}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <HorsePower />
-                                    </InputAdornment>
-                                )
-                            }}
-                        >
-                            {state.power.options.map((option) => (
-                                <MenuItem key={option.value} value={option.value}>
-                                    {option.label}
-                                </MenuItem>
-                            ))}
-                        </TextField>
-                    </NoSsr>
-            </div>
-        )}
-
-        </itemContext.Consumer>
-    );
+  return (
+    <div>
+      <Accordion square expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
+        <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
+          <Typography><CarInformation className={classes.titleIcon} />INFORMATION</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Suspense fallback={<div className={classes.fullBack}></div>}>
+            <AsyncFirstAccordionSection />
+          </Suspense>
+        </AccordionDetails>
+      </Accordion>
+      <Accordion square expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
+        <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
+          <Typography><CarInsurance className={classes.titleIcon} />ASSURANCE</Typography>
+        </AccordionSummary>
+        {load && <AccordionDetails>
+          <Suspense fallback={<div className={classes.fullBack}></div>}>
+            <AsyncSecondAccordionSection />
+          </Suspense>
+        </AccordionDetails>}
+      </Accordion>
+      <Accordion square>
+        <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
+          <Typography></Typography>
+        </AccordionSummary>
+      </Accordion>
+    </div>
+  );
 }

@@ -58,10 +58,12 @@ const SignUp = (props) => {
       value: ""
     },
   })
+  
   useEffect(() => {
     props.onInitDefaultData()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   const handleChange = (event, name) => {
     const updatedFormValue = updateObject(state[name], { value: event.target.value });
     const updatedState = updateObject(state, { [name]: updatedFormValue })
@@ -185,7 +187,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onInitDefaultData: () => dispatch(actions.initDefaultData()),
+    onInitDefaultData: () => dispatch(actions.fetchDefaultData()),
     onAuth: ({email, password, isSignup, defaultData}) => dispatch(actions.auth(email, password, isSignup, defaultData)),
     onSetAuthRedirectPath: () => dispatch(actions.setAuthRedirectPath('/'))
   };

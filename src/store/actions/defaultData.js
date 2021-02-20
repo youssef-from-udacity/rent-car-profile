@@ -1,49 +1,26 @@
 import * as actionTypes from './actionTypes';
 
 
-export const setDefaultData = ( defaultData ) => {
+export const fetchDefaultDataSuccess = ( defaultData ) => {
     return {
-        type: actionTypes.SET_DEFAULT_DATA,
+        type: actionTypes.FETCH_DEFAULT_DATA_SUCCESS,
         defaultData: defaultData
     };
 };
 
-export const fetchDefaultDataFailed = () => {
+export const fetchDefaultDataFail = () => {
     return {
-        type: actionTypes.FETCH_DEFAULT_DATA_FAILED
+        type: actionTypes.FETCH_DEFAULT_DATA_FAIL
     };
 };
-
-export const initDefaultData = () => {
+export const fetchDefaultDataStart = () => {
     return {
-        type: actionTypes.INIT_DEFAULT_DATA
+      type: actionTypes.FETCH_DEFAULT_DATA_START
+    };
+  };
+
+export const fetchDefaultData = () => {
+    return {
+        type: actionTypes.FETCH_DEFAULT_DATA
     };
 };
-
-export const postDefaultData = (privateData, token, userId = null) => {
-    return {
-      type: actionTypes.POST_DEFAULT_DATA,
-      privateData: privateData,
-      token: token,
-      userId: userId,
-    };
-  };
-
-export const postDefaultDataStart = () => {
-    return {
-      type: actionTypes.POST_DEFAULT_DATA_START
-    };
-  };
-
-  export const postDefaultDataSuccess = () => {
-    return {
-      type: actionTypes.POST_DEFAULT_DATA_SUCCESS,
-    };
-  };
-
-  export const postDefaultDataFailed = error => {
-    return {
-      type: actionTypes.POST_DEFAULT_DATA_FAILED,
-      error: error
-    };
-  };

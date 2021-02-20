@@ -6,9 +6,6 @@ import TextField from '@material-ui/core/TextField';
 import PublishIcon from '@material-ui/icons/Publish';
 import { makeStyles } from '@material-ui/core/styles';
 
-import {useCardContext} from '../Cards/Cards';
-
-
 
 
 const readFileAsDataURL = (file) =>
@@ -51,9 +48,8 @@ const resizeImage = (imageURL, canvas, maxHeight) =>
  * submitting them to the server as data URLs. Also, shows a preview of the image.
  */
 const ImageInput = React.forwardRef(function ImageInput(props, ref) {
-  const {item} = useCardContext()
   const [state, setState] = useState({
-    value: item.avatarURL
+    value: props.avatarURL
   })
   const [canvas, SetCanvas] = useState(null)
   const { name } = props
@@ -114,6 +110,10 @@ const ImageInput = React.forwardRef(function ImageInput(props, ref) {
     SetCanvas(document.createElement('canvas'))
   }, [])
 
+  useEffect(() => {
+    return value? props.fileChange(value, 'avatarURL') : null
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value])
 
   const avatarIcon = (<CarAvatar />)
   return (

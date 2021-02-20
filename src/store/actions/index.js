@@ -1,11 +1,8 @@
 export {
-    initDefaultData,
-    setDefaultData,
-    fetchDefaultDataFailed,
-    postDefaultData,
-    postDefaultDataStart,
-    postDefaultDataSuccess,
-    postDefaultDataFailed,
+    fetchDefaultDataSuccess,
+    fetchDefaultDataFail,
+    fetchDefaultDataStart,
+    fetchDefaultData,
 } from './defaultData';
 
 export {
@@ -21,8 +18,24 @@ export {
 } from './auth';
 
 export {
-    fetchPrivateDataSuccess,
-    fetchPrivateDataFail,
-    fetchPrivateDataStart,
-    fetchPrivateData,
-} from './privateData';
+    createUserCard,
+    updateUserDataItemProperty,
+    addUserDataItemToState,
+    addUserDataItem,
+    fetchUserDataSuccess,
+    fetchUserDataFail,
+    fetchUserDataStart,
+    fetchUserData,
+    postUserData,
+    postUserDataStart,
+    postUserDataSuccess,
+    postUserDataFailed,
+    updateUserCard,
+    updateUserCardStart,
+    updateUserCardSuccess,
+    updateUserCardFailed,
+    removeUserCardStart,
+    removeUserCardSuccess,
+    removeUserCardFailed,
+    removeUserCard,
+} from './user';

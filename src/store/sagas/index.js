@@ -2,20 +2,20 @@ import { takeEvery, all } from "redux-saga/effects";
 
 import * as actionTypes from "../actions/actionTypes";
 
-import { initDefaultDataSaga, postDefaultDataSaga } from "./defaultData";
+import { fetchDefaultDataSaga } from "./defaultData";
 import {
   logoutSaga,
   checkAuthTimeoutSaga,
   authUserSaga,
-  authCheckStateSaga
+  authCheckStateSaga,
 } from "./auth";
 
-import { fetchPrivateDataSaga } from "./privateData";
+import { fetchUserDataSaga, postUserDataSaga,
+  updateUserCardSaga, removeUserCardSaga, } from "./user";
 
 
 export function* watchDefaultData() {
-  yield takeEvery(actionTypes.INIT_DEFAULT_DATA, initDefaultDataSaga);
-  yield takeEvery(actionTypes.POST_DEFAULT_DATA, postDefaultDataSaga);
+  yield takeEvery(actionTypes.FETCH_DEFAULT_DATA, fetchDefaultDataSaga);
 }
 
 
@@ -29,6 +29,9 @@ export function* watchAuth() {
 }
 
 
-export function* watchPrivateData() {
-  yield takeEvery(actionTypes.FETCH_PRIVATE_DATA, fetchPrivateDataSaga);
+export function* watchUser() {
+  yield takeEvery(actionTypes.POST_USER_DATA, postUserDataSaga);
+  yield takeEvery(actionTypes.FETCH_USER_DATA, fetchUserDataSaga);
+  yield takeEvery(actionTypes.UPDATE_USER_CARD, updateUserCardSaga);
+  yield takeEvery(actionTypes.REMOVE_USER_CARD, removeUserCardSaga);
 }

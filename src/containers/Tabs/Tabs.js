@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createContext, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -6,9 +6,12 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import DriveEtaIcon from '@material-ui/icons/DriveEta';
-import {CarRepairIcon} from '../../components/UI/CustomIcons/CustomIcons';
+import { CarRepairIcon } from '../../components/UI/CustomIcons/CustomIcons';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
-import FirstTab from '../../components/Accordion/Accordion';
+import FirstTab from './FirstTab/FirstTab';
+import SecondTab from './SecondTab/SecondTab';
+
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -17,10 +20,10 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.paper,
   },
   tabPanel: {
-    padding: theme.spacing(5,1,1,1),
+    padding: theme.spacing(5, 1, 1, 1),
     [theme.breakpoints.up(400)]: {
-      padding: theme.spacing(5,3,3,3),
-  },
+      padding: theme.spacing(5, 3, 3, 3),
+    },
   }
 }));
 
@@ -38,7 +41,7 @@ function TabPanel(props) {
       {...other}
     >
       {value === index && (
-          <Box className={classes.tabPanel}>{children}</Box>
+        <Box className={classes.tabPanel}>{children}</Box>
       )}
     </div>
   );
@@ -58,7 +61,11 @@ function a11yProps(index) {
 }
 
 
+export const itemContext = createContext();
 
+export function useTabsContext() {
+  return useContext(itemContext)
+}
 export default function ScrollableTabsButtonForce() {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
@@ -80,19 +87,22 @@ export default function ScrollableTabsButtonForce() {
           aria-label="scrollable force tabs example"
         >
           <Tab label="profil de voiture" icon={<DriveEtaIcon />} {...a11yProps(0)} />
-          <Tab label="entretien" icon={<CarRepairIcon />} {...a11yProps(1)} />
+          <Tab label="garage" icon={<CarRepairIcon />} {...a11yProps(1)} />
           <Tab label="dépenses" icon={<AttachMoneyIcon />} {...a11yProps(2)} />
         </Tabs>
       </AppBar>
-      <TabPanel value={value} index={0} >
-        <FirstTab />
+      <itemContext.Provider value={{ value: value }}>
+
+        <TabPanel value={value} index={0} >
+          <FirstTab value={value} />
+        </TabPanel>
+        <TabPanel value={value} index={1}>
+          <SecondTab />
+        </TabPanel>
+        <TabPanel value={value} index={2}>
+          Item Three
       </TabPanel>
-      <TabPanel value={value} index={1}>
-        Item Two
-      </TabPanel>
-      <TabPanel value={value} index={2}>
-        Item Three
-      </TabPanel>
+      </itemContext.Provider>
     </div>
   );
 }
