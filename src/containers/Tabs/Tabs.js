@@ -1,4 +1,6 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useEffect, useRef } from 'react';
+import { connect } from 'react-redux';
+import * as actions from "../../store/actions/index.js";
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -66,13 +68,48 @@ export const itemContext = createContext();
 export function useTabsContext() {
   return useContext(itemContext)
 }
-export default function ScrollableTabsButtonForce() {
+function ScrollableTabsButtonForce(props) {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
+  const [show, setShow] = React.useState(false);
+  const mounted = useRef();
+
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  useEffect(() => {
+    setShow(false)
+
+    setTimeout(()=>setShow(true), 350)
+    if (value === 1) {
+      props.onStartRendering();
+      setTimeout(props.onFinishRendering, 1000)
+    }
+
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+
+  useEffect(() => {
+    // eslint-disable-next-line no-unused-expressions
+    props.dataItem.notification?.tab ? setValue(props.dataItem.notification.tab) : null
+    //props.onRemoveUserDataItemProperties()
+
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+  useEffect(() => {
+      if (!mounted.current) {
+          // do componentDidMount logic
+          mounted.current = 1;
+      } else if(mounted.current === 1) {
+          mounted.current = 2
+          // only once on component did update
+          props.onRemoveUserDataItemNotification()
+      }
+  });
 
   return (
     <div className={classes.root}>
@@ -94,10 +131,10 @@ export default function ScrollableTabsButtonForce() {
       <itemContext.Provider value={{ value: value }}>
 
         <TabPanel value={value} index={0} >
-          <FirstTab value={value} />
+          {show && <FirstTab value={value} panel={props.dataItem.notification?.panel} />}
         </TabPanel>
         <TabPanel value={value} index={1}>
-          <SecondTab />
+          {show && <SecondTab />}
         </TabPanel>
         <TabPanel value={value} index={2}>
           Item Three
@@ -106,3 +143,21 @@ export default function ScrollableTabsButtonForce() {
     </div>
   );
 }
+const mapStateToProps = state => {
+  return {
+      dataItem: state.user.dataItem,
+  };
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onUpdateInfo: (value, name) => dispatch(actions.updateUserDataItemProperty(value, name)),
+    onStartRendering: () => dispatch(actions.triggerLoadingToTrue()),
+    onFinishRendering: () => dispatch(actions.triggerLoadingToFalse()),
+    onRemoveUserDataItemNotification: () => dispatch(actions.removeUserDataItemNotification()),
+
+
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ScrollableTabsButtonForce);

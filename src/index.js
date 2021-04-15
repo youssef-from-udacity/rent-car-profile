@@ -14,6 +14,7 @@ import createSagaMiddleware from "redux-saga";
 import { watchDefaultData, watchAuth, watchUser } from "./store/sagas";
 
 
+
 const composeEnhancers =
   (process.env.NODE_ENV === "development"
     ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
@@ -41,7 +42,7 @@ ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
       <BrowserRouter>
-        <App />
+          <App />
       </BrowserRouter>
     </Provider>
   </React.StrictMode>,

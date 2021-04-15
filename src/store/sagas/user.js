@@ -49,8 +49,8 @@ export function* updateUserCardSaga(action) {
   yield put(actions.updateUserCardStart());
   try {
     yield axios.patch(`/user/${action.url}.json?auth=` + action.token, action.dataItem);
-    yield put(actions.fetchUserData(action.token, action.userId))
-    yield put(actions.updateUserCardSuccess(action));
+    //yield put(actions.fetchUserData(action.token, action.userId))
+    yield put(actions.updateUserCardSuccess(action.dataItem));
 
   } catch (error) {
     yield put(actions.updateUserCardFailed(error));

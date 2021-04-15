@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
 import { connect } from 'react-redux';
-import { fade, makeStyles } from '@material-ui/core/styles';
+import * as actions from "../../store/actions/index";
+import { makeStyles } from '@material-ui/core/styles';
+import { cloneDeep } from 'lodash';
+import { updateObject } from '../../shared/utility';
+import { withRouter } from 'react-router-dom';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
@@ -16,10 +20,11 @@ import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import SwipeableTemporaryDrawer from '../SideDrawer/SideDrawer';
-import * as actions from "../../store/actions/index.js";
 import { Link as RouterLink } from 'react-router-dom';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { CarLogo } from '../../components/UI/CustomIcons/CustomIcons';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import NotificationsNoneOutlinedIcon from '@material-ui/icons/NotificationsNoneOutlined';
 
 
 
@@ -60,9 +65,9 @@ const useStyles = makeStyles((theme) => ({
                 }
             },
         },
-        
+
     },
-    logoTitle:{
+    logoTitle: {
         position: 'absolute',
         bottom: 3,
         left: "50%",
@@ -73,21 +78,6 @@ const useStyles = makeStyles((theme) => ({
             fontSize: "16px",
         },
     },
-    search: {
-        position: 'relative',
-        borderRadius: theme.shape.borderRadius,
-        backgroundColor: fade(theme.palette.common.white, 0.15),
-        '&:hover': {
-            backgroundColor: fade(theme.palette.common.white, 0.25),
-        },
-        marginRight: theme.spacing(2),
-        marginLeft: 0,
-        width: '100%',
-        [theme.breakpoints.up('sm')]: {
-            marginLeft: theme.spacing(3),
-            width: 'auto',
-        },
-    },
     searchIcon: {
         padding: theme.spacing(0, 2),
         height: '100%',
@@ -96,19 +86,6 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-    },
-    inputRoot: {
-        color: 'inherit',
-    },
-    inputInput: {
-        padding: theme.spacing(1, 1, 1, 0),
-        // vertical padding + font size from searchIcon
-        paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-        transition: theme.transitions.create('width'),
-        width: '100%',
-        [theme.breakpoints.up('md')]: {
-            width: '20ch',
-        },
     },
     sectionDesktop: {
         display: 'none',
@@ -123,12 +100,34 @@ const useStyles = makeStyles((theme) => ({
             display: 'none',
         },
     },
+    home: {
+        fontWeight: "bold",
+        fontSize: "18px",
+    },
+    homeButton: {
+        padding: 10,
+        opacity: .5,
+        '&:hover': {
+            opacity: 1,
+        },
+    },
+    notification: {
+        marginLeft: 'auto',
+        '& button': {
+            padding: 10,
+            fontSize: 18
+        },
+        '& svg': {
+            fontSize: 34,
+        },
+    },
 }));
 
 const PrimaryAppBar = (props) => {
     const classes = useStyles();
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
+
 
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -161,7 +160,7 @@ const PrimaryAppBar = (props) => {
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
-            <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+            <MenuItem onClick={handleMenuClose} component={RouterLink} to="/profile">Profile</MenuItem>
             <MenuItem onClick={handleMenuClose}>My account</MenuItem>
             <MenuItem onClick={handleMenuClose} component={RouterLink} to="/logout">
                 <IconButton
@@ -196,15 +195,19 @@ const PrimaryAppBar = (props) => {
                 </IconButton>
                 <p>Messages</p>
             </MenuItem>
-            <MenuItem>
-                <IconButton aria-label="show 11 new notifications" color="inherit">
-                    <Badge badgeContent={11} color="secondary">
+            <MenuItem 
+                component={RouterLink} to="/notification">
+                <IconButton 
+                aria-label={`show ${props.notification} new notifications`} 
+                color="inherit"
+                >
+                    <Badge badgeContent={props.notification} color="secondary">
                         <NotificationsIcon />
                     </Badge>
                 </IconButton>
                 <p>Notifications</p>
             </MenuItem>
-            <MenuItem onClick={handleMenuClose}>
+            <MenuItem onClick={handleMenuClose} component={RouterLink} to="/profile">
                 <IconButton
                     aria-label="account of current user"
                     aria-controls="primary-search-account-menu"
@@ -230,6 +233,8 @@ const PrimaryAppBar = (props) => {
         </Menu>
     );
 
+    
+
     return (
         <Box component="div" className={classes.grow}>
             <AppBar position="static">
@@ -246,7 +251,7 @@ const PrimaryAppBar = (props) => {
                     <Box className={classes.title}>
                         <ButtonBase aria-label="logo" color="inherit">
                             <CarLogo />
-                        <span className={classes.logoTitle}>Rent Manager</span>
+                            <span className={classes.logoTitle}>Rent Manager</span>
                         </ButtonBase>
                     </Box>
                     <Box component="div" className={classes.grow} />
@@ -259,8 +264,12 @@ const PrimaryAppBar = (props) => {
                                             <MailIcon />
                                         </Badge>
                                     </IconButton>
-                                    <IconButton aria-label="show 17 new notifications" color="inherit">
-                                        <Badge badgeContent={17} color="secondary">
+                                    <IconButton 
+                                    aria-label={`show ${props.notification} new notifications`} 
+                                    color="inherit"
+                                    component={RouterLink} to="/notification"
+                                    >
+                                        <Badge badgeContent={props.notification} color="secondary">
                                             <NotificationsIcon />
                                         </Badge>
                                     </IconButton>
@@ -325,9 +334,90 @@ const PrimaryAppBar = (props) => {
     );
 }
 
+const NotificationAppBar = (props) => {
+    const classes = useStyles()
+
+    return (
+        <Box component="div" className={classes.grow}>
+            <AppBar position="static">
+                <Toolbar style={{ backgroundColor: '#38b2ac' }}>
+                    {/* <Box className={classes.title}>
+                        <ButtonBase aria-label="logo" color="inherit">
+                            <ArrowBackIcon />
+                        <span className={classes.logoTitle}>Home</span>
+                        </ButtonBase>
+                    </Box> */}
+                    <Box
+                        edge="start"
+                        color="inherit">
+                        <ButtonBase
+                            aria-label="home page"
+                            className={classes.homeButton}
+                            component={RouterLink} to="/"
+                            color="inherit">
+                            <ArrowBackIcon />
+                            <span className={classes.home}>Home</span>
+                        </ButtonBase>
+                    </Box>
+                    <Box
+                        edge="end"
+                        className={classes.notification}
+                        color="inherit">
+                        <ButtonBase
+                            aria-label="home page"
+                            color="inherit">
+                            <Badge badgeContent={props.notification} color="secondary">
+                                <NotificationsNoneOutlinedIcon />
+                            </Badge>
+                        </ButtonBase>
+                    </Box>
+                </Toolbar>
+            </AppBar>
+        </Box>
+    )
+}
+
+const ToolBar = (props) => {
+    const [notification, setNotification] = useState([]);
+
+    useEffect(() => {
+        const cardElements = cloneDeep(props.userData) || [];
+        const arrElements = []
+        cardElements.forEach((e) => {
+            if (e.insurance.reminder.switchKey && e.insurance.reminder.value < (new Date()).getTime()) {
+                const tab = e.insurance.reminder.tab
+                const panel = e.insurance.reminder.panel
+                const type = e.insurance.reminder.type
+                const path = 'insurance.reminder'
+                const element = updateObject(e, { notification: { tab, panel, type, path } })
+                arrElements.push(element)
+            }
+            e.maintenance.forEach((arr, i) => {
+                if (arr[arr.length - 1].switchKey && arr[arr.length - 1].value < (new Date()).getTime()) {
+                    const tab = arr[arr.length - 1].tab
+                    const type = arr[arr.length - 1].type
+                    const path = `maintenance[${i}][${arr.length - 1}]`
+                    const element = updateObject(e, { notification: { tab, type, path } })
+                    arrElements.push(element)
+                }
+
+            })
+        })
+        setNotification(arrElements)
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.userData])
+
+    const notificationPath = Boolean(props.location.pathname !== '/notification')
+    return notificationPath ? <PrimaryAppBar isAuthenticated={props.isAuthenticated} notification={notification.length} /> 
+    : <NotificationAppBar notification={notification.length} />
+}
+
 const mapStateToProps = state => {
     return {
         isAuthenticated: state.auth.token !== null,
+        userData: state.user.userData,
+
     };
 }
 
@@ -337,7 +427,7 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(PrimaryAppBar);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(ToolBar));
 
 
 

@@ -7,10 +7,14 @@ const initialState = {
     loading: false,
 };
 
-const createUserCard = (state, action) => {
-    const newUserData = [...state.userData]
-    newUserData.push(action.data)
-    return updateObject(state, { userData: newUserData });
+
+
+const triggerLoadingToFalse = (state, action) => {
+    return updateObject(state, { loading: false });
+};
+
+const triggerLoadingToTrue = (state, action) => {
+    return updateObject(state, { loading: true });
 };
 
 const removeUserDataStart = (state, action) => {
@@ -30,6 +34,12 @@ const removeUserDataFailed = (state, action) => {
 const updateUserDataItemProperty = (state, action) => {
     const updatedProperty = updateObject(state["dataItem"], { [action.name]: action.value });
     return updateObject(state, { dataItem: updatedProperty });
+};
+
+const removeUserDataItemNotification = (state, action) => {
+    const updatedDataItem = {...state.dataItem}
+    delete updatedDataItem.notification
+    return updateObject(state, { dataItem: updatedDataItem });
 };
 
 const addUserDataItemToState = (state, action) => {
@@ -102,8 +112,11 @@ const reducer = (state = initialState, action) => {
 
         case actionTypes.ADD_USER_DATA_ITEM_TO_STATE: return addUserDataItemToState(state, action);
         case actionTypes.UPDATE_USER_ITEM_DATA_PROPERTY: return updateUserDataItemProperty(state, action);
+        case actionTypes.REMOVE_USER_ITEM_DATA_NOTIFICATION: return removeUserDataItemNotification(state, action);
 
-        case actionTypes.CREATE_USER_CARD: return createUserCard(state, action);
+        //case actionTypes.CREATE_USER_CARD: return createUserCard(state, action);
+        case actionTypes.TRIGGER_LOADING_TO_FALSE: return triggerLoadingToFalse(state, action);
+        case actionTypes.TRIGGER_LOADING_TO_TRUE: return triggerLoadingToTrue(state, action);
         default:
             return state;
     }

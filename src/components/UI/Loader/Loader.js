@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, lazy, Suspense } from 'react';
-import Backdrop from '@material-ui/core/Backdrop';
-import { makeStyles } from '@material-ui/core/styles';
+import MuiDialog from '@material-ui/core/Dialog';
 import Box from '@material-ui/core/Box';
+import { withStyles } from '@material-ui/core/styles';
 
 const asyncClockLoader = lazy(() => {
   return import("./ClockLoader/ClockLoader");
@@ -43,19 +43,23 @@ const asyncRotateLoader = lazy(() => {
   return import("./RotateLoader/RotateLoader");
 });
 
-const useStyles = makeStyles((theme) => ({
-  backdrop: {
-    zIndex: theme.zIndex.drawer + 1,
-    color: '#fff',
+
+const Dialog = withStyles({
+  paper: {
+    backgroundColor: "transparent",
+    margin: 0,
+    boxShadow: 'none',
+    overflow: 'hidden',
+    width: "100%",
+    height: "100%",
   },
-}));
-
-
+})(MuiDialog);
 export default function SimpleBackdrop(props) {
-  const classes = useStyles();
 
-  const asynCMP = useRef()
-
+  const asynCMP = useRef({
+    component: null,
+    randomIndex: 0,
+  })
 
   useEffect(() => {
     const arr = [
@@ -73,18 +77,27 @@ export default function SimpleBackdrop(props) {
       asyncBarLoader,
       asyncRotateLoader,
     ];
-    asynCMP.current = arr[Math.floor(Math.random() * arr.length)]
+    // eslint-disable-next-line no-unused-expressions
+    asynCMP.current.randomIndex = !props.toggle ? Math.floor(Math.random() * arr.length) : asynCMP.current.randomIndex;
+    asynCMP.current.component = arr[asynCMP.current.randomIndex];
     // returned function will be called on component unmount 
     return () => {
-      asynCMP.current = null
+      asynCMP.current = {
+        component: arr[asynCMP.current.randomIndex],
+        randomIndex: asynCMP.current.randomIndex,
+      }
     }
-  }, [props.toggle,props])
+  }, [props.toggle, props])
 
   return (
-    <Backdrop className={classes.backdrop} open={props.toggle}>
-      <Suspense fallback={<div></div>}>
-        <Box component={asynCMP.current}></Box>
-      </Suspense>
-    </Backdrop>
+    <Dialog
+      open={props.toggle}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+    >
+        <Suspense fallback={<div></div>}>
+          <Box component={asynCMP.current.component}></Box>
+        </Suspense>
+    </Dialog>
   );
 }

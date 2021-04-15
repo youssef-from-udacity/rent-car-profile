@@ -14,7 +14,7 @@ import clsx from 'clsx';
 import ImageInput from '../../../ImageInput/ImageInput';
 import Zoom from '@material-ui/core/Zoom';
 import { useTabsContext } from '../../Tabs';
-import cloneDeep from 'lodash.clonedeep';
+import {cloneDeep} from 'lodash';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -156,6 +156,10 @@ function InformationInputs(props) {
 
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
+        return ()=>{
+            setFormData({})
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     return (
@@ -177,6 +181,7 @@ function InformationInputs(props) {
                                     name='avatarURL'
                                     maxHeight={330}
                                     avatarURL={formData.avatarURL.value}
+                                    avatarPlaceHolder='car'
                                     fileChange={handleChange}
                                     style={{ display: 'block' }}
                                 />

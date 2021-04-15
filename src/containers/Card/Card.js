@@ -17,18 +17,24 @@ import SaveIcon from '@material-ui/icons/Save';
 import SettingsBackupRestoreIcon from '@material-ui/icons/SettingsBackupRestore';
 import Slide from '@material-ui/core/Slide';
 import { CarAvatar } from '../../components/UI/CustomIcons/CustomIcons';
+import {cloneDeep} from 'lodash';
+import { updateObject } from '../../shared/utility';
+import Badge from '@material-ui/core/Badge';
+
+
+//import get from 'lodash/get';
 
 
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
-    margin: "5px auto"
+    margin: "auto",
+    maxWidth: 500,
   },
   paper: {
     padding: theme.spacing(2),
-    margin: 'auto',
-    maxWidth: 500,
+    margin: '20px 5px',
   },
   image: {
     width: "100%",
@@ -36,12 +42,8 @@ const useStyles = makeStyles((theme) => ({
     overflow: "hidden",
   },
   img: {
-    margin: 'auto',
-    display: 'block',
-    maxWidth: '100%',
-    height: '100%',
     maxHeight: 300,
-    overflow: 'hidden',
+    maxWidth: '100%',
   },
   label: {
     fontSize: 12,
@@ -72,7 +74,8 @@ function Card(props) {
   const [rerender, setRerender] = useState();
   const [save, setSave] = useState(false);
   const [reset, setReset] = useState(false);
-  const [checked, setChecked] = React.useState(false);
+  const [checked, setChecked] = useState(false);
+  const [notification, setNotification] = useState([]);
 
   const { updateUserData } = props
 
@@ -142,12 +145,36 @@ function Card(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reset])
 
+  useEffect(() => {
+    const ElementItem = cloneDeep(props.item);
+    const arrElements = []
+      if (ElementItem.insurance.reminder.switchKey &&ElementItem.insurance.reminder.value < (new Date()).getTime()) {
+        const tab =ElementItem.insurance.reminder.tab
+        const panel =ElementItem.insurance.reminder.panel
+        const type =ElementItem.insurance.reminder.type
+        const path = 'insurance.reminder'
+        const element = updateObject(ElementItem, { notification: {tab, panel, type, path} })
+        arrElements.push(element)
+      }
+     ElementItem.maintenance.forEach((arr, i) => {
+        if ( arr[arr.length - 1].switchKey && arr[arr.length - 1].value < (new Date()).getTime()) {
+          const tab = arr[arr.length - 1].tab
+          const type = arr[arr.length - 1].type
+          const path = `maintenance[${i}][${arr.length - 1}]`
+          const element = updateObject(ElementItem, { notification: {tab, type, path} })
+          arrElements.push(element)
+        }
+        
+      } )
+    setNotification(arrElements)
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.item])
   return (
     <Slide direction="right" in={checked} mountOnEnter unmountOnExit>
 
     <div className={classes.root}>
-      <Paper className={classes.paper}>
+      <Paper elevation={4} className={classes.paper}>
         <Grid container spacing={2}>
           <Grid xs={12} sm={4} item>
             <ButtonBase className={classes.image}>
@@ -178,9 +205,11 @@ function Card(props) {
 
             </Grid>
             <Grid item>
-              <IconButton aria-label="reminder">
-                <NotificationsIcon />
-              </IconButton>
+              {notification.length ? <IconButton aria-label={`show ${notification.length} new notifications`} color="inherit" onClick={() => props.open(notification[0])}>
+                                        <Badge badgeContent={notification.length} color="secondary">
+                                            <NotificationsIcon />
+                                        </Badge>
+                                    </IconButton> : null}
             </Grid>
           </Grid>
         </Grid>

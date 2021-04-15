@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { CarAvatar } from '../../components/UI/CustomIcons/CustomIcons';
+import { CarAvatar, PersonAvatar } from '../../components/UI/CustomIcons/CustomIcons';
 import Fab from '@material-ui/core/Fab';
 import TextField from '@material-ui/core/TextField';
 import PublishIcon from '@material-ui/icons/Publish';
@@ -115,7 +115,7 @@ const ImageInput = React.forwardRef(function ImageInput(props, ref) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value])
 
-  const avatarIcon = (<CarAvatar />)
+  const avatarIcon = props.avatarPlaceHolder === 'car' ? <CarAvatar /> : <PersonAvatar />
   return (
 
     <div className={classes.root}>

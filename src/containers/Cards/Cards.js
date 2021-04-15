@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Dialog from '../dialog/dialog'
 import Card from '../Card/Card';
 import * as actions from "../../store/actions/index.js";
-import cloneDeep from 'lodash.clonedeep';
+import {cloneDeep} from 'lodash';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import getDataObj from './obj';
@@ -36,6 +36,7 @@ const Cards = (props) => {
 
   const openDialog = (item) => {
     props.onAddUserDataItemToState(item)
+
     setOpen(true);
   };
 
@@ -44,14 +45,15 @@ const Cards = (props) => {
   };
 
   const updateUserData = () => {
+
     props.onAddUserDataItemToState()
     const obj = {}
     Object.keys(props.dataItem).map((key) => obj[key] = props.dataItem[key]);
     const data = {
       dataItem: obj,
       token: props.token,
-      userId: obj.userId,
-      url: obj.userId + '/' + obj.id + '/'
+      userId: props.userId,
+      url: props.userId + '/' + obj.id + '/'
     }
     props.onUpdateUserCard(data)
     closeDialog()
@@ -68,8 +70,8 @@ const Cards = (props) => {
     const data = {
       userData: obj,
       token: props.token,
-      userId: obj.userId,
-      url: obj.userId + '/' + obj.id + '/'
+      userId: props.userId,
+      url: props.userId + '/' + obj.id + '/'
     }
     props.onRemoveUserCard(data)
     setWaitForDataItem(false)
@@ -78,10 +80,12 @@ const Cards = (props) => {
 
   const createUserDataItem = (e) => {
     e.preventDefault();
-    const data = { ...fetchDataObj, userId: props.userId, id: Math.random().toString(36).substr(-8) }
-    props.onCreateUserCard(data);
+    const data = { ...fetchDataObj, userId: props.userId};
+    const token= props.token;
+    const userId= props.userId;
+
+    props.onPostUserData(data, token, userId);
     setScrollToElement(true)
-    setElementsToRender([...elementsToRender, data])
   }
 
   useEffect(() => {
@@ -158,7 +162,6 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
 
   return {
-    onCreateUserCard: (data) => dispatch(actions.createUserCard(data)),
     onUpdateUserCard: (data) => dispatch(actions.updateUserCard(data)),
     onRemoveUserCard: (data) => dispatch(actions.removeUserCard(data)),
     onAddUserDataItemToState: (item) => dispatch(actions.addUserDataItemToState(item)),

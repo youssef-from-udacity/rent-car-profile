@@ -123,6 +123,7 @@ export function MaintenanceToDoInput(prop) {
         <NoSsr>
             <div className={classes.title}>
                 <TextField
+                    type="number"
                     className={classes.textField}
                     style={{marginLeft: 0}}
                     id={randomId()}
@@ -151,6 +152,7 @@ export function CurrentOdometerInput(prop) {
     return (
         <NoSsr>
             <TextField
+                type="number"
                 className={classes.textField}
                 id={randomId()}
                 label="kilométrage actuel"
@@ -168,13 +170,14 @@ export function CurrentOdometerInput(prop) {
         </NoSsr>
     )
 }
-export function MaintenanceSouldStart(prop) {
+export function MaintenanceShouldStart(prop) {
     const classes = useStyles();
     const { objProps } = prop
     const { MaintenanceToDoInputValue, CurrentOdometerInputValue } = objProps
     return (
         <NoSsr>
             <TextField
+                type="number"
                 className={clsx(classes.textField, classes.oilChangeStart)}
                 id={randomId()}
                 label="dû dans"

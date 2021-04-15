@@ -43,6 +43,11 @@
 .react-datepicker .Mui-disabled .MuiSvgIcon-root{
     color:darkgray !important;
 }
+
+.react-datepicker__portal .react-datepicker__day-name, .react-datepicker__portal .react-datepicker__day, .react-datepicker__portal .react-datepicker__time-name {
+    font-weight: 700;
+}
+
 .clearfix::after {
     content: "";
     clear: both;

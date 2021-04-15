@@ -1,10 +1,14 @@
 
 import * as actionTypes from "./actionTypes";
 
-export const createUserCard = (data) => {
+export const triggerLoadingToTrue = () => {
   return {
-    type: actionTypes.CREATE_USER_CARD,
-    data: data
+    type: actionTypes.TRIGGER_LOADING_TO_TRUE,
+  };
+};
+export const triggerLoadingToFalse = () => {
+  return {
+    type: actionTypes.TRIGGER_LOADING_TO_FALSE,
   };
 };
 
@@ -42,6 +46,11 @@ export const updateUserDataItemProperty = (value, name) => {
     type: actionTypes.UPDATE_USER_ITEM_DATA_PROPERTY,
     name: name,
     value: value,
+  };
+};
+export const removeUserDataItemNotification = (value, name) => {
+  return {
+    type: actionTypes.REMOVE_USER_ITEM_DATA_NOTIFICATION,
   };
 };
 export const addUserDataItem = dataItem => {
@@ -122,16 +131,17 @@ export const updateUserCard = ({ dataItem, token, userId, url }) => {
   };
 };
 
-export const updateUserCardStart = (dataItem) => {
+export const updateUserCardStart = () => {
   return {
     type: actionTypes.UPDATE_USER_CARD_START,
-    dataItem: dataItem,
   };
 };
 
-export const updateUserCardSuccess = () => {
+export const updateUserCardSuccess = (dataItem) => {
   return {
     type: actionTypes.UPDATE_USER_CARD_SUCCESS,
+    dataItem: dataItem,
+
   };
 };
 

@@ -12,19 +12,32 @@ const obj = {
         power: ""
     },
     insurance: {
-        insuranceCompanyName: "",
-        insuranceEndDay: "",
-        insurancePolicyNumber: "",
-        insuranceReminder: "",
-        insuranceReminderSwitch: false,
-        insuranceStartDay: ""
-    },
+        insuranceCompanyName: {
+          value: ""
+        },
+        insuranceEndDay: {
+          value: ''
+        },
+        insurancePolicyNumber: {
+          value: ""
+        },
+        insuranceStartDay: {
+          value: '1613590440000'
+        },
+        reminder: {
+          panel: "panel2",
+          switchKey: false,
+          tab: 0,
+          type: "Insurance expiration Date",
+          value: ''
+        }
+      },
     maintenance: [
         [
             { ele: "EditButton", enable: true },
             { ele: "MaintenanceToDoInput", enable: true, placeholder: "ex: 10 000", value: '', },
             { ele: "CurrentOdometerInput", enable: true, value: '', },
-            { ele: "MaintenanceSouldStart", enable: true, switchKey: true },
+            { ele: "MaintenanceShouldStart", enable: true, switchKey: true },
             { ele: "OilDistance", enable: true, switchKey: true },
             { ele: "AirFilterSwitch", enable: true, switchKey: true },
             { ele: "OilFilterSwitch", enable: true, switchKey: true },
@@ -37,13 +50,13 @@ const obj = {
             { ele: "EngineSparkSwitch", enable: false, switchKey: false },
             { ele: "GasolinFilterSwitch", enable: false, switchKey: false },
             { ele: "SteeringLiquidSwitch", enable: false, switchKey: false },
-            { ele: "ReminderSwitch", enable: true, switchKey: false, value: '', },
+            { ele: "ReminderSwitch", enable: true, switchKey: false, value: '', tab: 1, type: 'Maintenance expiration Date' },
         ],
         [
             { ele: "EditButton", enable: true },
             { ele: "MaintenanceToDoInput", enable: true, placeholder: "ex: 30 000", value: '', },
             { ele: "CurrentOdometerInput", enable: true, value: '', },
-            { ele: "MaintenanceSouldStart", enable: true, switchKey: true },
+            { ele: "MaintenanceShouldStart", enable: true, switchKey: true },
             { ele: "OilDistance", enable: false, switchKey: false },
             { ele: "AirFilterSwitch", enable: false, switchKey: false },
             { ele: "OilFilterSwitch", enable: false, switchKey: false },
@@ -56,13 +69,13 @@ const obj = {
             { ele: "EngineSparkSwitch", enable: false, switchKey: false },
             { ele: "GasolinFilterSwitch", enable: false, switchKey: false },
             { ele: "SteeringLiquidSwitch", enable: false, switchKey: false },
-            { ele: "ReminderSwitch", enable: true, switchKey: false, value: '', },
+            { ele: "ReminderSwitch", enable: true, switchKey: false, value: '', tab: 1,type: 'Maintenance expiration Date' },
         ],
         [
             { ele: "EditButton", enable: true },
             { ele: "MaintenanceToDoInput", enable: true, placeholder: "ex: 60 000", value: '', },
             { ele: "CurrentOdometerInput", enable: true, value: '', },
-            { ele: "MaintenanceSouldStart", enable: true, switchKey: true },
+            { ele: "MaintenanceShouldStart", enable: true, switchKey: true },
             { ele: "OilDistance", enable: false, switchKey: false },
             { ele: "AirFilterSwitch", enable: false, switchKey: false },
             { ele: "OilFilterSwitch", enable: false, switchKey: false },
@@ -75,7 +88,7 @@ const obj = {
             { ele: "EngineSparkSwitch", enable: true, switchKey: true },
             { ele: "GasolinFilterSwitch", enable: true, switchKey: true },
             { ele: "SteeringLiquidSwitch", enable: true, switchKey: true },
-            { ele: "ReminderSwitch", enable: true, switchKey: false, value: '', },
+            { ele: "ReminderSwitch", enable: true, switchKey: false, value: '', tab: 1,type: 'Maintenance expiration Date' },
         ],
     ],
 }

@@ -69,7 +69,7 @@ const useStyles = makeStyles((theme) => ({
 },
 }));
 
-export default function FirstTab() {
+export default function FirstTab(props) {
   const [expanded, setExpanded] = React.useState('panel1');
   const [load, setLoad] = React.useState(false);
   const handleChange = (panel) => (event, newExpanded) => {
@@ -78,10 +78,14 @@ export default function FirstTab() {
   const classes = useStyles();
   
   useEffect(() => {
-    setTimeout(()=>setLoad(true),1000)
+    // eslint-disable-next-line no-unused-expressions
+    props.panel ? setExpanded(props.panel) : null
+    let timer = setTimeout(()=>setLoad(true),500)
     return () =>{
+      clearTimeout(timer)
       setLoad(false)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (

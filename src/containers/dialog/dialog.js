@@ -52,7 +52,7 @@ function FullScreenDialog(props) {
           </Toolbar>
         </AppBar>
         <List>
-          {props.open && <Tabs />}
+          {props.open && <Tabs tab={props.tab} panel={props.panel} />}
         </List>
       </Dialog>
   );

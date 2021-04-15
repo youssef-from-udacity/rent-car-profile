@@ -4,13 +4,14 @@ import { connect } from 'react-redux';
 import * as actions from './store/actions/index';
 import ScopedCssBaseline from '@material-ui/core/ScopedCssBaseline';
 import Loader from './components/UI/Loader/Loader';
-
-
-import Cards from './containers/Cards/Cards';
 import Layout from './hoc/Layout/Layout';
 import { unstable_createMuiStrictModeTheme as createMuiTheme } from '@material-ui/core';
 import { ThemeProvider } from '@material-ui/styles';
 import Logout from './containers/Auth/Logout/Logout';
+import PrivateRoute from "./hoc/PrivateRoute/PrivateRoute";
+
+
+
 
 
 const theme = createMuiTheme({
@@ -40,11 +41,20 @@ document.body.style.setProperty("--primaryMain", primaryMain)
 document.body.style.setProperty("--primaryContrastText", primaryContrastText)
 document.body.style.setProperty("--primaryLight", primaryLight)
 
+const asyncProfile = lazy(() => {
+  return import('./containers/Profile/Profile');
+});
+const asyncNotification = lazy(() => {
+  return import('./containers/Notification/Notification');
+});
+const asyncCards = lazy(() => {
+  return import('./containers/Cards/Cards');
+});
 const asyncSignIn = lazy(() => {
   return import('./containers/Auth/SignIn/SignIn');
 });
 const asyncSignOut = lazy(() => {
-  return import('./containers/Auth/SignUp/SignUp');
+  return import('./containers/Auth/SignUp/SignForm');
 });
 
 
@@ -54,29 +64,19 @@ class App extends Component {
   }
 
   render() {
-    let routes = (
+    const routes = (
       <Suspense fallback={<div></div>}>
         <Switch>
+          <PrivateRoute path="/profile" component={asyncProfile} />
+          <PrivateRoute path="/notification" component={asyncNotification} />
+          <PrivateRoute path="/logout" component={Logout} />
+          <PrivateRoute path="/" exact component={asyncCards} />
           <Route path="/sign-up" component={asyncSignOut} />
           <Route path="/sign-in" component={asyncSignIn} />
           <Redirect to="/sign-in" />
         </Switch>
       </Suspense>
     );
-
-    if (this.props.isAuthenticated) {
-      routes = (
-        <Suspense fallback={<div></div>}>
-          <Switch>
-            <Route path="/sign-up" component={asyncSignOut} />
-            <Route path="/sign-in" component={asyncSignIn} />
-            <Route path="/logout" component={Logout} />
-            <Route path="/" exact component={Cards} />
-            <Redirect to="/" />
-          </Switch>
-        </Suspense>
-      );
-    }
 
     const { forwardedRef } = this.props;
 
@@ -95,7 +95,6 @@ class App extends Component {
 
 const mapStateToProps = state => {
   return {
-    isAuthenticated: state.auth.token !== null,
     loading: state.defaultData.loading || state.user.loading || state.auth.loading,
   };
 };

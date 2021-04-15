@@ -20,7 +20,10 @@ import {
     MuiPickersUtilsProvider,
     DateTimePicker,
 } from '@material-ui/pickers';
-import cloneDeep from 'lodash.clonedeep';
+import { updateObject } from '../../../../shared/utility';
+import {cloneDeep} from 'lodash';
+
+
 
 
 export const customReminderTheme = createMuiTheme({
@@ -105,10 +108,7 @@ const useStyles = makeStyles((theme) => ({
 
 function InsuranceInputs(props) {
     const classes = useStyles();
-    //const { formData, handleChange } = useDialogContext();
-
     const { value } = useTabsContext();
-
     const [formData, setFormData] = useState();
     const [startDate, setStartDate] = useState();
     const [endDate, setEndDate] = useState();
@@ -121,54 +121,34 @@ function InsuranceInputs(props) {
 
 
     useEffect(() => {
-        setFormData({
-            insuranceStartDay: {
-                value: props.dataItem.insurance?.insuranceStartDay || "",
-            },
-            insuranceEndDay: {
-                value: props.dataItem.insurance?.insuranceEndDay || "",
-            },
-            insuranceCompanyName: {
-                value: props.dataItem.insurance?.insuranceCompanyName || "",
-            },
-            insurancePolicyNumber: {
-                value: props.dataItem.insurance?.insurancePolicyNumber || "",
-            },
-            insuranceReminder: {
-                value: props.dataItem.insurance?.insuranceReminder || "",
-            },
-            insuranceReminderSwitch: {
-                value: props.dataItem.insurance?.insuranceReminderSwitch || false,
-            },
-        })
-        props.dataItem.insurance?.insuranceStartDay ? setStartDate(new Date(parseInt(props.dataItem.insurance.insuranceStartDay))) : setStartDate(null);
-        props.dataItem.insurance?.insuranceEndDay ? setEndDate(new Date(parseInt(props.dataItem.insurance.insuranceEndDay))) : setEndDate(null);
+        
+        const startD = props.dataItem.insurance.insuranceStartDay.value
+        const endD = props.dataItem.insurance.insuranceEndDay.value
+
+        setFormData(cloneDeep(props.dataItem.insurance))
+
+        startD ? setStartDate(new Date(parseInt(startD))) : setStartDate(null);
+        endD ? setEndDate(new Date(parseInt(endD))) : setEndDate(null);
+
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
-    const handleChange = (value, name) => {
-/*         const obj = {}
-        Object.keys(formData).map((key) => {
-            return key === name ? obj[key] = value : obj[key] = props.dataItem['insurance'][key]
-        });
-        props.onUpdateInfo(obj, 'insurance')
- */
-        const obj = cloneDeep(formData)
-        obj[name].value = value
-        const obj2 = {}
-        Object.keys(obj).map((key) => obj2[key] = obj[key].value);
+    const handleChange = (newObj) => {
+
+        const obj = updateObject(formData,newObj )
         setFormData(obj)
         clearTimeout(timer.current)
-        timer.current = setTimeout(()=>props.onUpdateInfo(cloneDeep(obj2), 'insurance'),300)
+        timer.current = setTimeout(() => props.onUpdateInfo(cloneDeep(obj), 'insurance'), 300)
     }
 
     const handleStartDateChange = (date) => {
         setStartDate(date);
-        handleChange(date.getTime(), 'insuranceStartDay')
+        handleChange({ insuranceStartDay: { value: date.getTime() } })
     };
+
     const handleEndDateChange = (date) => {
         setEndDate(date);
-        handleChange(date.getTime(), 'insuranceEndDay')
+        handleChange({ insuranceEndDay: { value: date.getTime() } })
 
     };
 
@@ -191,7 +171,7 @@ function InsuranceInputs(props) {
                                 id="input-insurance-company-name"
                                 label="compagnie d'assurance"
                                 value={formData.insuranceCompanyName.value}
-                                onChange={(event) => handleChange(event.target.value, 'insuranceCompanyName')}
+                                onChange={(event) => handleChange({insuranceCompanyName: event.target.value})}
                                 InputProps={{
                                     startAdornment: (
                                         <InputAdornment position="start">
@@ -207,7 +187,7 @@ function InsuranceInputs(props) {
                                 id="input-insurance-number"
                                 label="Numéro d'assurance"
                                 value={formData.insurancePolicyNumber.value}
-                                onChange={(event) => handleChange(event.target.value, 'insurancePolicyNumber')}
+                                onChange={(event) => handleChange({insurancePolicyNumber: event.target.value})}
                                 InputProps={{
                                     startAdornment: (
                                         <InputAdornment position="start">
@@ -263,10 +243,10 @@ function InsuranceInputs(props) {
                             valueName="insuranceReminder"
                             switchName="insuranceReminderSwitch"
                             label="définir un rappel"
-                            handleSwitchKeyChange={(value) => handleChange(value, "insuranceReminderSwitch")}
-                            handleInputChange={(value) => handleChange(value, "insuranceReminder")}
-                            switchKey={formData.insuranceReminderSwitch.value}
-                            value={formData.insuranceReminder.value}
+                            handleSwitchKeyChange={(value) => handleChange({ reminder: updateObject(formData.reminder, { switchKey: value }) })}
+                            handleInputChange={(value) => handleChange({ reminder: updateObject(formData.reminder, { value: value }) })}
+                            switchKey={formData.reminder.switchKey}
+                            value={formData.reminder.value}
                         />
                     </div>
                 </Zoom>

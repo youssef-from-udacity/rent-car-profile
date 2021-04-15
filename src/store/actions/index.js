@@ -18,8 +18,10 @@ export {
 } from './auth';
 
 export {
-    createUserCard,
+    triggerLoadingToFalse,
+    triggerLoadingToTrue,
     updateUserDataItemProperty,
+    removeUserDataItemNotification,
     addUserDataItemToState,
     addUserDataItem,
     fetchUserDataSuccess,

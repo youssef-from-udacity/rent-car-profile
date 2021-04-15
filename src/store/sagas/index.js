@@ -11,7 +11,7 @@ import {
 } from "./auth";
 
 import { fetchUserDataSaga, postUserDataSaga,
-  updateUserCardSaga, removeUserCardSaga, } from "./user";
+  updateUserCardSaga, removeUserCardSaga } from "./user";
 
 
 export function* watchDefaultData() {

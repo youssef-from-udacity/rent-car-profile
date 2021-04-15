@@ -47,10 +47,10 @@ const CustomDatePickerHeader = (props) => {
             />
           </IconButton>
           <Typography
-            variant="h6"
+            variant="h5"
             id="outlined-basic"
             label="Outlined"
-            style={{ flexGrow: "1" }}
+            style={{ flexGrow: "1",fontWeight: 700 }}
           >{months[getMonth(date)]}</Typography>
           <IconButton
             aria-label="Next Month"
@@ -90,7 +90,8 @@ const SelectTime = (props) => {
 };
 
 export default function DatePickerRange(props) {
-  const { startDate, endDate, handleChange } = props
+  let { startDate, endDate, handleChange } = props
+  startDate = endDate < new Date() ?  new Date() : startDate;
 
   const onChange = (date) => {
     const dates = Array.isArray(date) ? date : [date, endDate]
